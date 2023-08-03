@@ -52,21 +52,28 @@ void Ball::draw() {
     DrawCircleV(position, static_cast<float>(ballRadius), MAROON);
 }
 
- bool Ball::checkCollisionWithPlayer(const Player& player) {
-        // Calculate the swept AABB for the ball's movement
 
-        // Check collision with the player's rectangle
-        if (CheckCollisionCircleRec(position, static_cast<float>(ballRadius),
-            (Rectangle){ player.position.x - player.dimension.x / 2, player.position.y - player.dimension.y / 2, player.dimension.x, player.dimension.y }))
-        {
-            if (ballSpeed.y > 0) {
-                ballSpeed.y *= -1.0f;
-                // Adjust the ball's x-speed based on the position relative to the player's center
-                ballSpeed.x = (position.x - player.position.x) / (player.dimension.x / 2) * 5.0f;
-            }
 
-            return true;
+
+  
+bool Ball::checkCollisionWithPlayer(const Player& player) {
+    // Check collision with the player's rectangle
+    if (CheckCollisionCircleRec(position, static_cast<float>(ballRadius),
+        (Rectangle){ player.position.x - player.dimension.x / 2, player.position.y - player.dimension.y / 2, player.dimension.x, player.dimension.y }))
+    {
+        // Reflect the ball's direction based on the side the ball hits
+        if (ballSpeed.y > 0) {
+            ballSpeed.y *= -1.0f;
+
+            // Calculate the spin factor based on the side of the paddle the ball hits
+            float spinAmount = (position.x - player.position.x) / (player.dimension.x / 2) * 0.5f;
+
+            // Apply the spin to the ball's horizontal movement
+            ballSpeed.x += spinAmount;
         }
 
-        return false;
+        return true;
     }
+
+    return false;
+}
