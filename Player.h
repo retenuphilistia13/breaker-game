@@ -9,7 +9,7 @@ extern const int cellCount;
 class Player {
 public:
 
-    Vector2 dimension = { static_cast<float>(cellSize * (cellCount/2)), static_cast<float>(cellSize) };
+    Vector2 dimension = { static_cast<float>(cellSize * (cellCount/3)), static_cast<float>(cellSize) };
     Vector2 position = { static_cast<float>(GetScreenWidth() / 2) - (dimension.x / 2), static_cast<float>(cellSize * cellCount) - cellSize * 3 };
 
     Vector2 PlayerSpeed = { 2.0f, 0.0f };

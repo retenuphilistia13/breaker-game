@@ -12,7 +12,8 @@
 #include"Player.h"
 #include"Ball.h"
 
-
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
 
@@ -48,26 +49,97 @@ public:
     std::vector<Ball> balls;
 
 
-    void detectCollision() {
-        for (auto& ball : balls) {
-            if (CheckCollisionCircleRec(ball.position, static_cast<float>(ball.ballRadius), { player.position.x, player.position.y, player.dimension.x, player.dimension.y })) {
+    void playerBallCollision(Ball& ballToCheck) {
+        
+            if (CheckCollisionCircleRec(ballToCheck.position, static_cast<float>(ballToCheck.ballRadius), { player.position.x, player.position.y, player.dimension.x, player.dimension.y })) {
                 // Handle collision between the ball and the player 
+ float relativePos = ballToCheck.position.x - player.position.x;
+            float playerCenterX = player.position.x + player.dimension.x / 2;
+            float angleOfIncidence = atan2f(ballToCheck.position.y - player.position.y, relativePos - player.dimension.x / 2);
 
-                ball.ballSpeed.x *= -1.0f;
-                ball.ballSpeed.y *= -1.0f;
+            // Reflect the ballToCheck's velocity based on the angle of incidence
+            float ballSpeedMagnitude = sqrtf(ballToCheck.speed.x * ballToCheck.speed.x + ballToCheck.speed.y * ballToCheck.speed.y);
+            ballToCheck.speed.x = ballSpeedMagnitude * cosf(angleOfIncidence);
+            ballToCheck.speed.y = ballSpeedMagnitude * sinf(angleOfIncidence);
+
+            // Increase the ball's speed by a constant factor (e.g., 1.2) after hitting the player
+            const float speedBoostFactor = 1.2f;
+            ballToCheck.speed.x *= speedBoostFactor;
+            ballToCheck.speed.y *= speedBoostFactor;
+
+
             }
-        }
+           
+           
+        
     }
 
     void createInstance(int countPosition, int countSpeed) {
         balls.emplace_back(countPosition, countSpeed);
     }
 
+void ballSpeedRegulator(Ball& ball ){
+if(-ball.speed.x*2<ball.speed.y){
+    ball.speed.x+=ball.speed.y/3;
+}else if(-ball.speed.y*2<ball.speed.x){
 
+     ball.speed.y+=ball.speed.x/3;
+}
+
+
+}
+// Method to calculate and print the average speed of balls on the screen
+    void printAverageSpeeds() {
+        // Calculate the average speed in the x direction
+        float avgSpeedX = 0.0f;
+         float avgSpeedY = 0.0f;
+        for (const auto& ball : balls) {
+            avgSpeedX += ball.speed.x;
+            avgSpeedY += ball.speed.y;
+        }
+        if (!balls.empty()) {
+            
+        }
+
+        // Calculate the average speed in the y direction
+       
+
+        if (!balls.empty()) {
+            avgSpeedX /= balls.size();
+            avgSpeedY /= balls.size();
+        }
+
+// Print the average speeds on the middle of the screen
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
+
+        // Convert average speeds to strings
+        std::ostringstream avgSpeedXStr, avgSpeedYStr;
+        avgSpeedXStr << std::fixed << std::setprecision(3) << avgSpeedX;
+        avgSpeedYStr << std::fixed << std::setprecision(3) << avgSpeedY;
+
+        // Draw the text on the screen
+        int textPosX = screenWidth / 2 - MeasureText("Average Speed (X): 000.000", 20) / 2;
+        int textPosY = screenHeight / 2 - 40;
+        DrawText(("Average Speed (X): " + avgSpeedXStr.str()).c_str(), textPosX, textPosY, 20, RED);
+
+        textPosY += 40;
+        DrawText(("Average Speed (Y): " + avgSpeedYStr.str()).c_str(), textPosX, textPosY, 20, RED);
+    
+    }
 void update(){
     player.update();
-detectCollision();
-  for (auto& ball : balls){ball.update();ballsUpdates++;}
+
+////update ball and check collotion
+  for (auto& ball : balls){
+        ball.update();
+     
+    playerBallCollision(ball);
+printAverageSpeeds();
+
+    ballsUpdates++;
+    }
+
  // Remove balls that are no longer needed
         balls.erase(
             std::remove_if(balls.begin(), balls.end(), [this](const Ball& ball) {
@@ -81,15 +153,16 @@ detectCollision();
 
 void draw(){
     player.draw();
-  for (auto& ball : balls){ball.draw();
+  for (auto& ball : balls){
+    ball.draw();
     ballsDrawn++;
       }
 }
 
+
     int getBallsQuantity(){
        return balls.size();
     }
-
     private:
 
      // Helper function to determine if a ball should be deleted based on certain conditions.
@@ -121,7 +194,7 @@ int main()
 
 Game game;
 
-size_t ballNumber=10;
+size_t ballNumber=5;
 for (size_t i=0; i < ballNumber; ++i){//crete ball instances
     game.createInstance(CountPosition,CountSpeed);
         CountSpeed+=0;
@@ -169,11 +242,6 @@ else{
 }
 
 
-
-      
-      
-        
-
 ///////draw title//////
       if(!flagPause)
        DrawText(titleCStr, x, 80, 40, WHITE);
@@ -194,14 +262,12 @@ std::string drawnBallsString = TextFormat("ball drawn: %i BallsQuantity: %i ball
 
 
     }
+
     CloseWindow();
     return 0;
 }
-void drawTitle(){
 
 
-
-}
 const char* getString(const std::string title ){
      const char* titleCStr = title.c_str();
      return titleCStr;
