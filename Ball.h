@@ -11,13 +11,16 @@ extern const int cellCount;
 class Ball {
 public:
     Vector2 position = { static_cast<float>(cellCount * cellSize / 2 - 1), static_cast<float>(cellCount * cellSize / 2 - 1) };
-    Vector2 direction = { 0.3f, 0.4f };
-    Vector2 speed = { 2.0f, 2.0f };
-    int ballRadius = static_cast<int>(cellSize / 2);
+   // Vector2 direction = { 0.3f, 0.4f };
+    Vector2 speed = { 100.0f, 10.0f };
+    int radius = static_cast<int>(cellSize);
 
-// Define the ballSpeedMagnitude based on the desired speed of the ball
-float ballSpeedMagnitude = 2.0f; // You can change this value as needed
 
+enum State{
+ALIVE,
+DEAD
+};
+mutable State state; 
 
 public:
     Ball();
@@ -27,8 +30,10 @@ Ball(int CountSpeed,int CountPosition);
 
     Vector2 BallSpeed(int CountSpeed);
 
-    void update();
+    void update(const Player player);
 
     void draw();
+
+    bool isOutOfBound() const;
 
 };

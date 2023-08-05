@@ -1,19 +1,18 @@
 
 #include <iostream>
 #include <raylib.h>
-#include <raymath.h>
-
-#include <memory>
 
 #include<vector>
 #include <algorithm> 
 #include<String>
 
+#include <iomanip>
+
 #include"Player.h"
 #include"Ball.h"
 
-#include <sstream>
-#include <iomanip>
+
+
 using namespace std;
 
 
@@ -24,6 +23,8 @@ const int cellSize = 20;
 const int cellCount = 40;
 
 const std::string Title="Shape Collider";
+class Game;
+
 
 
 bool flagPause=false;
@@ -51,7 +52,7 @@ public:
 
     void playerBallCollision(Ball& ballToCheck) {
         
-            if (CheckCollisionCircleRec(ballToCheck.position, static_cast<float>(ballToCheck.ballRadius), { player.position.x, player.position.y, player.dimension.x, player.dimension.y })) {
+            if (CheckCollisionCircleRec(ballToCheck.position, static_cast<float>(ballToCheck.radius), { player.position.x, player.position.y, player.dimension.x, player.dimension.y })) {
                 // Handle collision between the ball and the player 
  float relativePos = ballToCheck.position.x - player.position.x;
             float playerCenterX = player.position.x + player.dimension.x / 2;
@@ -93,17 +94,13 @@ if(-ball.speed.x*2<ball.speed.y){
         // Calculate the average speed in the x direction
         float avgSpeedX = 0.0f;
          float avgSpeedY = 0.0f;
+
         for (const auto& ball : balls) {
             avgSpeedX += ball.speed.x;
             avgSpeedY += ball.speed.y;
         }
-        if (!balls.empty()) {
-            
-        }
 
         // Calculate the average speed in the y direction
-       
-
         if (!balls.empty()) {
             avgSpeedX /= balls.size();
             avgSpeedY /= balls.size();
@@ -127,15 +124,16 @@ if(-ball.speed.x*2<ball.speed.y){
         DrawText(("Average Speed (Y): " + avgSpeedYStr.str()).c_str(), textPosX, textPosY, 20, RED);
     
     }
+
 void update(){
     player.update();
 
-////update ball and check collotion
+////update ball and check collotion///
   for (auto& ball : balls){
-        ball.update();
+        ball.update(player);
      
     playerBallCollision(ball);
-printAverageSpeeds();
+  printAverageSpeeds();//average ball speed
 
     ballsUpdates++;
     }
@@ -167,20 +165,29 @@ void draw(){
 
      // Helper function to determine if a ball should be deleted based on certain conditions.
     bool ballShouldBeDeleted(const Ball& ball) {
-// Check if the ball is off the screen (reached the bottom)
-        int twentyPercent = (cellSize >> 2) + (cellSize >> 4);//twenty percent of cellsize 0.2*cellSize
-        if ( ball.position.y >= GetScreenHeight()-ball.ballRadius-twentyPercent) {
-            return true;
-        }
-
-        return false;
+// Check if the ball is off the screen (reached the bottom) for deletion
+      if (ball.isOutOfBound())return true;
+      if(ball.state==Ball::State::DEAD)return true;
+      
+return false;
     }
 
 };
 
+void generateMultipleBall(size_t ballNumber,Game& game ){
+
+for (size_t i=0; i < ballNumber; ++i){//crete ball instances
+    game.createInstance(CountPosition,CountSpeed);
+        CountSpeed+=30;
+    CountPosition+=cellSize/(ballNumber*0.1);
+     }
+
+  }
+
 
 int main()
 {
+ const char* titleCStr = getString(Title);
 
     // Initialize the window and other settings
 
@@ -190,24 +197,16 @@ int main()
 
     SetWindowPosition(250, 100);  
 
-    SetTargetFPS(30);
+    SetTargetFPS(60);
 
-Game game;
+ Game game;
 
-size_t ballNumber=5;
-for (size_t i=0; i < ballNumber; ++i){//crete ball instances
-    game.createInstance(CountPosition,CountSpeed);
-        CountSpeed+=0;
-    CountPosition+=cellSize/(ballNumber*0.1);
-}
+size_t ballNumber=30;
+
+generateMultipleBall(ballNumber,game);
 
 
- // Calculate the number of cells to draw in each color
-    int cellsInDarkGreen = cellCount * cellCount / 2;
-    int cellsInLightBlue = cellCount * cellCount - cellsInDarkGreen;
 
-
- const char* titleCStr = getString(Title);
 
 int textWidth = MeasureText(titleCStr, 40);
 int x = (cellSize * cellCount) / 2 - (textWidth / 2);
@@ -219,24 +218,21 @@ int x = (cellSize * cellCount) / 2 - (textWidth / 2);
 
 drawBackground();
 
+////record and obervation varible///
 game.ballsDrawn=0;
 game.ballsUpdates=0;
+
+
+
+//////pause game logic//////
         int keyPressed=GetKeyPressed();
 
-            if (keyPressed==KEY_P)
-            {
-                flagPause=!(flagPause);
-            //       if (game.balls.size() > 1)
-            // {
-            //     game.balls.erase(game.balls.begin() + 1);
-            // }
-                                
-            }
+    if (keyPressed==KEY_P)flagPause=!(flagPause);
+            
 
 if(flagPause){
     DrawText("Paused", x, 80, 40, WHITE);
 }
-
 else{
     game.update();
 }
@@ -272,6 +268,8 @@ const char* getString(const std::string title ){
      const char* titleCStr = title.c_str();
      return titleCStr;
 }
+
+
 void drawBackground(){
 
   // Drawing
@@ -281,7 +279,7 @@ void drawBackground(){
             {
                 int x = col * cellSize;
                 int y = row * cellSize;
-                if ((row + col) % 2 == 0)
+                if ((row + col) % 10 == 0)
                 {
                     DrawRectangle(x, y, cellSize, cellSize, darkGreen);
                 }
@@ -294,14 +292,5 @@ void drawBackground(){
 
 
 }
-// bool EventTriggered(double interval)
-// {
-//     double currentTime = GetTime();
-//     if (currentTime - lastUpdateTime >= interval)
-//     {
-//         lastUpdateTime = currentTime;
-//         return true;
-//     }
-//     return false;
-// }
+
 
