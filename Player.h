@@ -9,13 +9,16 @@ extern const int cellCount;
 class Player {
 public:
 
-    Vector2 dimension = { static_cast<float>(cellSize * (cellCount/3)), static_cast<float>(cellSize) };
+    Vector2 dimension = { static_cast<float>(cellSize * (cellCount/5)), static_cast<float>(cellSize) };
     Vector2 position = { static_cast<float>(GetScreenWidth() / 2) - (dimension.x / 2), static_cast<float>(cellSize * cellCount) - cellSize * 3 };
 
-    Vector2 PlayerSpeed = { 2.0f, 0.0f };
-    Vector2 direction = { 0.0f, 0.0f };
+    Vector2 PlayerSpeed = { 8.0f, 0.0f };
+    Vector2 direction = { 3.0f, 0.0f };
+
 
 public:
+        // Method to get the player's hitbox as a Rectangle
+    Rectangle getRectangle() const;
     void draw();
     void update();
     void userInput();

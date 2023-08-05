@@ -5,6 +5,7 @@
 #include <raymath.h>
 #include<cmath>
 #include <iostream>
+#include <algorithm>
 extern const int cellSize;
 extern const int cellCount;
 
@@ -16,9 +17,15 @@ public:
     int radius = static_cast<int>(cellSize);
 
 
-enum State{
-ALIVE,
-DEAD
+    // Current boost factor
+    float boostFactor = 1.0f;
+
+
+enum State {
+    NORMAL,
+    DEAD,
+    WALL_COLLISION,
+    PLAYER_COLLISION
 };
 mutable State state; 
 
@@ -30,10 +37,18 @@ Ball(int CountSpeed,int CountPosition);
 
     Vector2 BallSpeed(int CountSpeed);
 
-    void update(const Player player);
+    //void update(const Player player);
+
+    void update(const Rectangle& playerRect);
 
     void draw();
 
     bool isOutOfBound() const;
 
+    void resetState();
+
+private :
+void updatePosition(float deltaTime);
+
+void playerBallCollision(const Rectangle & playerRect);
 };
