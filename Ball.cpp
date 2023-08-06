@@ -38,7 +38,7 @@ Vector2 Ball::BallSpeed(int CountSpeed) {
     };
 }
 
-void Ball::update(const Rectangle & playerRect) {
+void Ball::update() {
     float deltaTime = GetFrameTime(); // Get the delta time in seconds
 
     updatePosition(deltaTime);
@@ -61,7 +61,7 @@ void Ball::update(const Rectangle & playerRect) {
         state = State::WALL_COLLISION;
     }
 
-   playerBallCollision(playerRect);
+   //playerBallCollision(playerRect);
 
     if (state == State::NORMAL) {
         // Limit the ball's maximum speed in x and y directions
@@ -116,33 +116,57 @@ void Ball::resetState() {
     state = State::NORMAL;
 };
 
-void Ball::playerBallCollision(const Rectangle & playerRect){
- // Check if the ball hits the player
-    const float playerHitboxSize = 0.0f; // Adjust this value to change the hitbox size
-    if (CheckCollisionCircleRec(position, static_cast < float > (radius), {
-            playerRect.x - playerRect.width * playerHitboxSize,
-            playerRect.y - playerRect.height * playerHitboxSize,
-            playerRect.width * (1 + 2 * playerHitboxSize),
-            playerRect.height * (1 + 2 * playerHitboxSize)
-        })) {
-        // Handle collision between the ball and the player
+// void Ball::playerBallCollision(const Rectangle & playerRect){
+//  // Check if the ball hits the player
+//     const float playerHitboxSize = 0.0f; // Adjust this value to change the hitbox size
+//     if (CheckCollisionCircleRec(position, static_cast < float > (radius), {
+//             playerRect.x - playerRect.width * playerHitboxSize,
+//             playerRect.y - playerRect.height * playerHitboxSize,
+//             playerRect.width * (1 + 2 * playerHitboxSize),
+//             playerRect.height * (1 + 2 * playerHitboxSize)
+//         })) {
+//         // Handle collision between the ball and the player
 
-        // Calculate the angle of incidence between the ball and the player's center
-        float relativePos = position.x - playerRect.x;
-        float playerCenterX = playerRect.x + playerRect.width / 2;
-        float angleOfIncidence = atan2f(position.y - playerRect.y, relativePos - playerRect.width / 2);
+//         // Calculate the angle of incidence between the ball and the player's center
+//         float relativePos = position.x - playerRect.x;
+//         float playerCenterX = playerRect.x + playerRect.width / 2;
+//         float angleOfIncidence = atan2f(position.y - playerRect.y, relativePos - playerRect.width / 2);
 
-        // Reflect the ball's velocity based on the angle of incidence
-        float ballSpeedMagnitude = sqrtf(speed.x * speed.x + speed.y * speed.y);
-        speed.x = ballSpeedMagnitude * cosf(angleOfIncidence);
-        speed.y = ballSpeedMagnitude * sinf(angleOfIncidence);
+//         // Reflect the ball's velocity based on the angle of incidence
+//         float ballSpeedMagnitude = sqrtf(speed.x * speed.x + speed.y * speed.y);
+//         speed.x = ballSpeedMagnitude * cosf(angleOfIncidence);
+//         speed.y = ballSpeedMagnitude * sinf(angleOfIncidence);
 
-        // Increase the ball's speed by a constant factor after hitting the player
-        const float speedBoostFactor = 1.3f;
-        speed.x *= speedBoostFactor;
-        speed.y *= speedBoostFactor;
+//         // Increase the ball's speed by a constant factor after hitting the player
+//         const float speedBoostFactor = 1.3f;
+//         speed.x *= speedBoostFactor;
+//         speed.y *= speedBoostFactor;
 
-        state = State::PLAYER_COLLISION;
-    }
+//         state = State::PLAYER_COLLISION;
+//     }
+
+// }
+
+void Ball::setState(State newState){
+
+state=newState;
 
 }
+
+    // Method to get the speed of the ball
+    Vector2& Ball::getSpeed() {
+        return speed;
+    }
+
+        // Method to get the speed of the ball
+    Vector2 Ball::getPosition() const {
+        return position;
+    }
+
+
+
+    int Ball::getRadius() const{
+
+return radius;
+
+    }

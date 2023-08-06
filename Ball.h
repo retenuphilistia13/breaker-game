@@ -39,7 +39,7 @@ Ball(int CountSpeed,int CountPosition);
 
     //void update(const Player player);
 
-    void update(const Rectangle& playerRect);
+    void update();
 
     void draw();
 
@@ -47,8 +47,18 @@ Ball(int CountSpeed,int CountPosition);
 
     void resetState();
 
+    void setState(State newState);
+
+        // Method to get the speed of the ball
+    Vector2& getSpeed() ;
+     Vector2 getPosition() const;
+
+    
+
+     int getRadius() const;
+
 private :
 void updatePosition(float deltaTime);
 
-void playerBallCollision(const Rectangle & playerRect);
+// void playerBallCollision(const Rectangle & playerRect);
 };
