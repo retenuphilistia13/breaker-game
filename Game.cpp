@@ -1,5 +1,31 @@
 
 #include"Game.h"
+void Game::ballBrickCollision(Ball& ball) {
+    for (auto brick = brickVector.begin(); brick != brickVector.end();) {
+        auto brickBounds = Rectangle{
+            (*brick)->getPosition().x,    // Use (*brick)-> to access the underlying Brick object
+            (*brick)->getPosition().y,
+            (*brick)->getSize().x,
+            (*brick)->getSize().y
+        };
+
+        if (CheckCollisionCircleRec(ball.getPosition(), ball.getRadius(), brickBounds)) {
+            brick = brickVector.erase(brick);
+            ball.speed.y*=-1.0;
+
+            //ball.speed.x*=0.99;//arcade mode (fun mode)
+            //ball.speed.x*=1.09;//crazy mode
+            ball.updatePosition(GetFrameTime());
+            brickCount--;
+        } else {
+            ++brick;
+        }
+    }
+}
+
+
+
+
 
    void Game::playerBallCollision(Ball& ballToCheck) {
         // Check if the ball hits the player
@@ -31,7 +57,7 @@
         }
     }
 
-    void Game::createInstance(int countPosition, int countSpeed) {
+    void Game::createBallInstance(int countPosition, int countSpeed) {
         balls.emplace_back(countPosition, countSpeed);
     }
 
@@ -66,9 +92,11 @@
         int screenHeight = GetScreenHeight();
 
         // Convert average speeds to strings
-        std::ostringstream avgSpeedXStr, avgSpeedYStr;
+        std::ostringstream avgSpeedXStr, avgSpeedYStr,countBrick;
         avgSpeedXStr << std::fixed << std::setprecision(3) << avgSpeedX;
         avgSpeedYStr << std::fixed << std::setprecision(3) << avgSpeedY;
+
+        countBrick << std::fixed << std::setprecision(3) << brickCount;
 
         // Draw the text on the screen
         int textPosX = screenWidth / 2 - MeasureText("Average Speed (X): 000.000", 20) / 2;
@@ -77,8 +105,10 @@
 
         textPosY += 40;
         DrawText(("Average Speed (Y): " + avgSpeedYStr.str()).c_str(), textPosX, textPosY, 20, RED);
+     textPosY+=40;
+       DrawText(("brickCount: " + countBrick.str()).c_str(), textPosX, textPosY, 20, RED);
 
-    }
+    };
 
     void Game::update() {
 
@@ -89,7 +119,7 @@
             ball.update();
 
             playerBallCollision(ball);
-
+ballBrickCollision(ball);
             printAverageSpeeds(); //average ball speed
 
             ballsUpdates++;
@@ -106,11 +136,11 @@
     }
 
     void Game::draw() {
-
+    for (auto &brick : brickVector) {
+        brick->draw();
+        //std::cout<<"brick count "<<brickCount<<std::endl;
+    }
         for (auto & ball: balls) {
-            
-            brick->draw();
-
             ball.draw();
             ballsDrawn++;
         }
@@ -136,10 +166,81 @@
 
     for (size_t i = 0; i < ballNumber; ++i) { //crete ball instances
         CountSpeed = 200;
-        createInstance(CountPosition, CountSpeed);
+        createBallInstance(CountPosition, CountSpeed);
 
         CountPosition += cellSize / (ballNumber * 0.1);
     }
 
 }
+// void Game::createBrickInstance(Vector2 position){
+//    Brick::BRICKSIZE brickSize = Brick::BRICKSIZE::SMALL;
 
+//     Vector2 size = Brick::getVector2ForBrickSize(brickSize);
+
+//     int brickSpacingX = size.x / 3; // Initialize spacing for each brick in a row
+//     int brickSpacingY = size.y / 3; // Initialize spacing for each row of bricks
+
+//     brickWidth = size.x;
+//     brickHeight = size.y;
+
+//     for (int row = 0; row < rowCount; ++row) {
+//         for (int col = 0; col < cellCount; ++col) {
+//             int x = col * (brickWidth + brickSpacingX);
+//             int y = row * (brickHeight + brickSpacingY);
+
+//             // Check if the brick is within the screen boundaries
+//             if (x + brickWidth > 0 && x < GetScreenWidth()-brickSpacingX && y + brickHeight > 0 && y < GetScreenHeight()-brickSpacingY) {
+//                 std::unique_ptr<Brick> brickInstance = std::make_unique<Brick>(Vector2{x, y}, brickSize);
+//                 brickVector.push_back(std::move(brickInstance));
+//                 brickCount++;
+//             }
+//         }
+//     }
+    
+// }
+
+
+void Game::createMultipleBrick() {
+    Brick::BRICKSIZE brickSize = Brick::BRICKSIZE::MEDIUM;
+
+    Vector2 size = Brick::getVector2ForBrickSize(brickSize);
+
+    float brickSpacingX = size.x / 40; // Initialize spacing for each brick in a row
+    float brickSpacingY = size.y / 30; // Initialize spacing for each row of bricks
+
+    brickWidth = size.x;
+    brickHeight = size.y;
+
+    Vector2 startRowRange = {3, 8}; // Specify the start and end rows
+    Vector2 startColRange = {1, (float)cellCount - 2}; // Specify the start and end columns
+
+    for (int row = startRowRange.x; row < startRowRange.y; ++row) {
+        for (int col = startColRange.x; col < startColRange.y; ++col) {
+            float x =(float) col * (brickWidth + brickSpacingX) + (brickSpacingX * (col - startColRange.x));
+            float y =(float) row * (brickHeight + brickSpacingY);
+
+            // Debugging: Print calculated x and y positions
+            //std::cout << "Row: " << row << " Col: " << col << " X: " << x << " Y: " << y << std::endl;
+
+            if (x + brickWidth > 0 && x < GetScreenWidth() - (brickWidth + brickSpacingX) && y + brickHeight > 0 && y < GetScreenHeight() - (brickHeight + brickSpacingY)) {
+createBrickInstance({x,y},brickSize);
+            }
+        }
+    }
+}
+
+///helper to generate multiple brick///
+void Game::createBrickInstance(Vector2 pos,Brick::BRICKSIZE brickSize){
+
+std::unique_ptr<Brick> brickInstance = std::make_unique<Brick>(Vector2{pos.x, pos.y}, brickSize);
+ 
+ brickVector.push_back(std::move(brickInstance));
+
+  brickCount++;
+}
+
+                // if((brickSpacing*cellSize)>GetScreenWidth())
+
+                //     {brickNewLine+=cellSize; brickSpacing=0;}else{
+                //         brickNewLine=cellSize;
+                //     }

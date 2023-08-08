@@ -76,13 +76,19 @@ int main() {
     Game game;
 
 
-    size_t ballNumber = 200;
+    size_t ballNumber = 1;
 
     game.generateMultipleBall(ballNumber);
 
     int textWidth = MeasureText(titleCStr, 40);
     int x = (cellSize * cellCount) / 2 - (textWidth / 2);
 
+///initalize bricks///
+game.createMultipleBrick();
+///
+
+
+///game loop////
 while (!WindowShouldClose()) {
    
     if (EventTriggered(1.0)&&(!flagPause)) { // Check for event every 1.0 second
@@ -102,15 +108,14 @@ while (!WindowShouldClose()) {
     //////pause game logic//////
     int keyPressed = GetKeyPressed();
 
-    if (keyPressed == KEY_P) {
+    if (keyPressed == KEY_P) 
         flagPause = !flagPause;
-    }
+    
 
 drawBackground(backgroundState);
 
-    if (!flagPause) {
+    if (!flagPause) 
         game.update();
-    }
    else if (flagPause) {
         DrawText("Paused", x, 80, 40, WHITE);
     } 
@@ -122,9 +127,9 @@ drawBackground(backgroundState);
 
 
     ///////draw title//////
-    if (!flagPause) {
+    //if (!flagPause) 
         DrawText(titleCStr, x, 80, 40, WHITE);
-    }
+    
     // Draw the integer as text at the specified position (100, 100)
     std::string drawnBallsString = TextFormat("ball drawn: %i BallsQuantity: %i ballsUpdates:%i", game.ballsDrawn, game.getBallsQuantity(), game.ballsUpdates);
     DrawText(drawnBallsString.c_str(), x - 200, 100, 30, RED);
@@ -154,6 +159,7 @@ void drawBackground(BackgroundState& backgroundState) {
         reverseBackground(backgroundState);
         countBackground++;
     }
+    
     // Drawing
     for (int row = 0; row < cellCount; ++row) {
         for (int col = 0; col < cellCount; ++col) {
@@ -166,9 +172,9 @@ void drawBackground(BackgroundState& backgroundState) {
             }
         }
     }
-     std::cout << "backgroundState: " << backgroundStateToString(backgroundState) << std::endl;
+   //  std::cout << "backgroundState: " << backgroundStateToString(backgroundState) << std::endl;
 
-        std::cout<<"countBackground: "<<countBackground<<std::endl;
+      //  std::cout<<"countBackground: "<<countBackground<<std::endl;
 
 }
 

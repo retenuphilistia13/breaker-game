@@ -57,7 +57,7 @@ Ball(int CountSpeed,int CountPosition);
 
      int getRadius() const;
 
-private :
+public :
 void updatePosition(float deltaTime);
 
 // void playerBallCollision(const Rectangle & playerRect);

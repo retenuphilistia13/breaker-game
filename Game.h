@@ -10,7 +10,9 @@
 #include <vector>
 
 #include <thread> 
+extern const int cellSize;
 
+extern const int cellCount;
 class Game {
 public:
     int ballsDrawn = 0;
@@ -21,15 +23,26 @@ public:
 
 
     Player player;
+
+
+ int brickWidth = 80; // Adjust to your brick's width
+    int brickHeight = 40; // Adjust to your brick's height
+
+    // int rowCount = 10; // Number of rows of bricks
+    // int verticalSpacing = 0; // Spacing between rows
+    int brickCount=0;
+
+std::vector<std::unique_ptr<Brick>> brickVector;
     std::vector<Ball> balls;
-
-    std::unique_ptr<Brick> brick = std::make_unique<Brick>(Vector2{0,0}, brick->BRICKSIZE::SMALL);
-
-
-
     void playerBallCollision(Ball& ballToCheck);
 
-    void createInstance(int countPosition, int countSpeed);
+void ballBrickCollision(Ball& ball);
+
+    void createBallInstance(int countPosition, int countSpeed);
+
+    void createBrickInstance(Vector2 pos,Brick::BRICKSIZE brickSize);
+
+    void createMultipleBrick();
 
     void generateMultipleBall(size_t ballNumber);
 

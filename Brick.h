@@ -1,7 +1,7 @@
 #pragma once
 
 #include<raylib.h>
-
+#include<map>
 extern const int cellSize;
 extern const int cellCount;
 class Brick{
@@ -20,6 +20,7 @@ private:
 
 bool isActive;
 
+
 public:
 
 
@@ -36,4 +37,15 @@ public:
 
 void setBrickSize(BRICKSIZE brickSize);
 
+float getBrickWidth();
+
+float getBrickHeight();
+
+Vector2 getPosition();
+
+
+Vector2 getSize() ;
+
+
+  static Vector2 getVector2ForBrickSize(BRICKSIZE brickSize); 
 };

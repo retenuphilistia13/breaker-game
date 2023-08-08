@@ -116,6 +116,29 @@ void Ball::resetState() {
     state = State::NORMAL;
 };
 
+void Ball::setState(State newState){
+
+state=newState;
+
+}
+
+    // Method to get the speed of the ball
+    Vector2& Ball::getSpeed() {
+        return speed;
+    }
+
+        // Method to get the speed of the ball
+    Vector2 Ball::getPosition() const {
+        return position;
+    }
+
+
+
+    int Ball::getRadius() const{
+
+return radius;
+
+    }
 // void Ball::playerBallCollision(const Rectangle & playerRect){
 //  // Check if the ball hits the player
 //     const float playerHitboxSize = 0.0f; // Adjust this value to change the hitbox size
@@ -146,27 +169,3 @@ void Ball::resetState() {
 //     }
 
 // }
-
-void Ball::setState(State newState){
-
-state=newState;
-
-}
-
-    // Method to get the speed of the ball
-    Vector2& Ball::getSpeed() {
-        return speed;
-    }
-
-        // Method to get the speed of the ball
-    Vector2 Ball::getPosition() const {
-        return position;
-    }
-
-
-
-    int Ball::getRadius() const{
-
-return radius;
-
-    }
