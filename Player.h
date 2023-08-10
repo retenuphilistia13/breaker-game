@@ -9,11 +9,12 @@ extern const int cellCount;
 class Player {
 public:
 
-    Vector2 dimension = { static_cast<float>(cellSize * (cellCount/5)), static_cast<float>(cellSize) };
+    Vector2 dimension = { static_cast<float>(cellSize * 5), static_cast<float>(cellSize) };
     Vector2 position = { static_cast<float>(GetScreenWidth() / 2) - (dimension.x / 2), static_cast<float>(cellSize * cellCount) - cellSize * 3 };
 
-    Vector2 PlayerSpeed = { 8.0f, 0.0f };
-    Vector2 direction = { 3.0f, 0.0f };
+    Vector2 PlayerSpeed = { (float)dimension.x/11 , 0.0f };
+
+    Vector2 direction = { 1.0f, 0.0f };
 
 
 public:
@@ -22,6 +23,18 @@ public:
     void draw();
     void update();
     void userInput();
+double lastUpdateTime = 0;
+    bool EventTriggered(double interval)
+{
+    double currentTime = GetTime();
+    if (currentTime - lastUpdateTime >= interval)
+    {
+        lastUpdateTime = currentTime;
+        return true;
+    }
+    return false;
+}
+
 };
 
 // #endif // PLAYER_H

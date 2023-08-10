@@ -41,32 +41,54 @@ Vector2 Ball::BallSpeed(int CountSpeed) {
 void Ball::update() {
     float deltaTime = GetFrameTime(); // Get the delta time in seconds
 
-    updatePosition(deltaTime);
-
-    // Check if the ball hits the left or right wall
-    if (position.x >= GetScreenWidth() - radius || position.x <= radius) {
-        // Reverse the x-speed and apply the boost
-        speed.x *= -1.0f;
-
-        position.x += speed.x * deltaTime; // Move the ball one more frame to prevent sticking to the wall
-        state = State::WALL_COLLISION;
+    ////if ball out of bounds would be deleted////
+    if (position.x >= GetScreenWidth() + radius || position.x <= -radius) {
+        state = State::DEAD;
+    } else {
+        resetState();
     }
 
-    // Check if the ball hits the top wall
-    if (position.y <= radius) {
-        // Reverse the y-speed and apply the boost
-        speed.y *= -1.0f;
+updatePosition(deltaTime);
 
-        position.y += speed.y * deltaTime; // Move the ball one more frame to prevent sticking to the wall
-        state = State::WALL_COLLISION;
+if(state==State::PLAYER_COLLISION){//increase speed diffuculty every time a ball is 
+    maxYSpeed+=2; maxXSpeed+=2;
+    
+    if(maxYSpeed>maxLimit){
+        maxYSpeed=maxLimit;
     }
+        if(maxXSpeed>maxLimit){
+        maxXSpeed=maxLimit;
+    }
+}
+// Check if the ball hits the walls
+if (position.x >= GetScreenWidth() - radius) {
+    // Reflect the ball's velocity vector based on the wall's normal
+    speed = reflectVector(speed, Vector2{-1.0f, 0.0f});
 
+    position.x = GetScreenWidth() - radius - 1;
+    state = State::WALL_COLLISION;
+}
+else if (position.x <= radius) {
+    // Reflect the ball's velocity vector based on the wall's normal
+    speed = reflectVector(speed, Vector2{1.0f, 0.0f});
+
+    position.x = radius + 1;
+    state = State::WALL_COLLISION;
+}
+
+// Check if the ball hits the top wall
+if (position.y <= radius) {
+    // Reflect the ball's velocity vector based on the wall's normal
+    speed = reflectVector(speed, Vector2{0.0f, 1.0f});
+
+    position.y = radius + 1;
+    state = State::WALL_COLLISION;
+}
    //playerBallCollision(playerRect);
 
     if (state == State::NORMAL) {
         // Limit the ball's maximum speed in x and y directions
-        const float maxXSpeed = 500.0f;
-        const float maxYSpeed = 500.0f;
+
 
         // Normalize the speed vector
         float speedMagnitude = sqrtf(speed.x * speed.x + speed.y * speed.y);
@@ -83,13 +105,8 @@ void Ball::update() {
         }
 
     }
-    ////if ball out of bounds ////
-    if (position.x >= GetScreenWidth() + radius || position.x <= -radius) {
-        state = State::DEAD;
-    } else {
-        resetState();
-    }
 
+   
 }
 
 void Ball::updatePosition(float deltaTime) {

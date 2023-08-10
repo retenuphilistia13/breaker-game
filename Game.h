@@ -3,6 +3,8 @@
 #include "Player.h"
 #include "Ball.h"
 #include"Brick.h"
+#include"SoundManager.h"
+
 #include<chrono>
 
 #include <iomanip> 
@@ -13,7 +15,23 @@
 extern const int cellSize;
 
 extern const int cellCount;
+
+
+
+
+
 class Game {
+private:
+
+   AudioManager audioManager;
+
+
+    // Sound death_sound
+    // ,brick_sound,
+    // reflection_sound;
+
+
+
 public:
     int ballsDrawn = 0;
     int ballsUpdates = 0;
@@ -33,7 +51,10 @@ public:
     int brickCount=0;
 
 std::vector<std::unique_ptr<Brick>> brickVector;
+
     std::vector<Ball> balls;
+    Game();
+    ~Game();
     void playerBallCollision(Ball& ballToCheck);
 
 void ballBrickCollision(Ball& ball);

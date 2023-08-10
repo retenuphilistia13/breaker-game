@@ -15,7 +15,7 @@ void Player::update() {
 
 void Player::userInput() {
 
-    float moveAmount = dimension.x /15;
+    float moveAmount = PlayerSpeed.x;
 
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
         float moveLeft = position.x - moveAmount;

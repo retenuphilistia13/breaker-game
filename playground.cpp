@@ -5,6 +5,9 @@
 ////game headers/////
 #include <raylib.h>
 
+#define RAYGUI_IMPLEMENTATION
+#include <raygui.h>
+
 #include"Player.h" 
 
 #include"Ball.h"
@@ -14,6 +17,7 @@
 #include"Game.h"
 
 #include"Brick.h"
+
 
  // Add this line to include the thread library
 using namespace std;
@@ -42,8 +46,12 @@ const std::string Title = "Shape Collider";
 bool flagPause = false;
 
 double lastUpdateTime = 0;
-unsigned int countBackground=3;
 
+
+unsigned int minLimit=3;
+unsigned int maxLimit=13;
+
+unsigned int countBackground=maxLimit;
 
 bool EventTriggered(double interval);
 
@@ -62,6 +70,7 @@ void reverseBackground(BackgroundState& backgroundState){
 }
 
 int main() {
+
     const char * titleCStr = getString(Title);
 
     // Initialize the window and other settings
@@ -70,23 +79,32 @@ int main() {
     InitWindow((cellSize * cellCount), (cellSize * cellCount), "Shape Collider");
 
     SetWindowPosition(250, 100);
-
+// layout_name: controls initialization
+    //----------------------------------------------------------------------------------
+    bool WindowBox000Active = true;
+    bool Button001Pressed = false;
+    bool Button002Pressed = false;
+    //----------------------------------------------------------------------------------
     SetTargetFPS(60);
 
-    Game game;
+    Game* game = new Game();
 
+    bool running = false;
 
     size_t ballNumber = 1;
 
-    game.generateMultipleBall(ballNumber);
+
 
     int textWidth = MeasureText(titleCStr, 40);
     int x = (cellSize * cellCount) / 2 - (textWidth / 2);
 
 ///initalize bricks///
-game.createMultipleBrick();
+game->createMultipleBrick();
 ///
 
+
+ // Create a rectangle for the button
+    Rectangle buttonRec = {  GetScreenWidth() / 2 - 100, GetScreenHeight() / 2 - 40, 200, 80 };
 
 ///game loop////
 while (!WindowShouldClose()) {
@@ -100,38 +118,72 @@ while (!WindowShouldClose()) {
     }
 
     BeginDrawing();
+// Update
+        if (GuiButton(buttonRec, "Click Me!"))
+        {
+                game->generateMultipleBall(ballNumber);// Button was clicked
+           running=true; // You can add your own code here to respond to the button click
+        }
+// // raygui: controls drawing
+//             //----------------------------------------------------------------------------------
+//             if (WindowBox000Active)
+//             {
+//                 WindowBox000Active = !GuiWindowBox((Rectangle){ 480, 144, 336, 480 }, "SAMPLE TEXT");
+//                 Button001Pressed = GuiButton((Rectangle){ 576, 456, 144, 24 }, "SAMPLE TEXT"); 
+//                 Button002Pressed = GuiButton((Rectangle){ 576, 504, 144, 24 }, "SAMPLE TEXT"); 
+//                 GuiStatusBar((Rectangle){ 504, 192, 96, 24 }, "SAMPLE TEXT");
+//             }
+ // Check for user input to manage the game instance
 
+
+
+        if (IsKeyDown(KEY_Q)) {
+            running = false;
+        } else if (IsKeyDown(KEY_R)) {
+            // Delete the previous instance and create a new one
+            delete game;
+            game = new Game();
+running=false;
+ //game->generateMultipleBall(ballNumber);
+ game->createMultipleBrick();
+
+        }
+    
     ////record and observation variable///
-    game.ballsDrawn = 0;
-    game.ballsUpdates = 0;
+    game->ballsDrawn = 0;
+    game->ballsUpdates = 0;
 
     //////pause game logic//////
     int keyPressed = GetKeyPressed();
 
-    if (keyPressed == KEY_P) 
-        flagPause = !flagPause;
-    
+    if (keyPressed == KEY_P) {
+            flagPause = !flagPause;
+        }
 
 drawBackground(backgroundState);
 
-    if (!flagPause) 
-        game.update();
+    if (!flagPause&&running==true) {
+            game->update();}
    else if (flagPause) {
         DrawText("Paused", x, 80, 40, WHITE);
     } 
 
     /////player input////////
-    game.player.userInput();
+    game->player.userInput();
 
-    game.draw();
+    game->draw();
 
-
+         // Draw the button
+    if(!running){
+            DrawRectangleRec(buttonRec, MAROON);
+            DrawText("Click Me!", buttonRec.x + buttonRec.width / 2 - MeasureText("Click Me!", 20) / 2,
+                     buttonRec.y + buttonRec.height / 2 - 20 / 2, 20, LIGHTGRAY);}
     ///////draw title//////
     //if (!flagPause) 
         DrawText(titleCStr, x, 80, 40, WHITE);
     
     // Draw the integer as text at the specified position (100, 100)
-    std::string drawnBallsString = TextFormat("ball drawn: %i BallsQuantity: %i ballsUpdates:%i", game.ballsDrawn, game.getBallsQuantity(), game.ballsUpdates);
+    std::string drawnBallsString = TextFormat("ball drawn: %i BallsQuantity: %i ballsUpdates:%i", game->ballsDrawn, game->getBallsQuantity(), game->ballsUpdates);
     DrawText(drawnBallsString.c_str(), x - 200, 100, 30, RED);
 
     DrawFPS(10, 10);
@@ -139,9 +191,29 @@ drawBackground(backgroundState);
 
 }
 
+
+
+
     CloseWindow();
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const char * getString(const std::string title) {
     const char * titleCStr = title.c_str();
@@ -152,12 +224,14 @@ void drawBackground(BackgroundState& backgroundState) {
     // Check if the animation is up or down based on countBackground value
 
     if(!flagPause)
-    if (countBackground >= 30) {
-        reverseBackground(backgroundState);
-        countBackground--;
-    } else if (countBackground < 3) {
-        reverseBackground(backgroundState);
-        countBackground++;
+    if (countBackground >= maxLimit) {
+       // reverseBackground(backgroundState);
+        //countBackground--;
+        countBackground=minLimit;
+    } else if (countBackground < minLimit) {
+        //reverseBackground(backgroundState);
+       // countBackground++;
+        countBackground=maxLimit;
     }
     
     // Drawing
