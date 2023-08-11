@@ -1,6 +1,7 @@
 #pragma once
 
-#include<raylib.h>
+#include "raylib.h"
+
 #include<map>
 extern const int cellSize;
 extern const int cellCount;

@@ -1,20 +1,26 @@
 
 #include"Game.h"
+#include "Sounds.h" // Include the enums
 
+void Game::LoadSounds() {
+    for (const auto& entry : soundFilePaths) {
+        audioManager.LoadCustomSound(entry.second);
+    }
+}
+
+void Game::UnloadSounds() {
+    audioManager.UnloadAllSounds();
+}
+
+void Game::PlayCustomSound(SoundFile soundFile) {
+     
+    
+}
 
 Game::Game() {
 
-    const char* soundFilePaths[] = {
-        "sounds/death.wav",
-        "sounds/brick_Explosian.wav",
-        "sounds/reflect.wav"
-    };
 
-
-// Initialize SoundManagers
-for(int i=0;i<3;i++){
-    audioManager.LoadCustomSound(soundFilePaths[i]);
-}
+LoadSounds();
 
 
 }
@@ -22,11 +28,7 @@ for(int i=0;i<3;i++){
 
 Game::~Game(){
 
-
-
-    audioManager.UnloadCustomSounds();
-
- 
+UnloadSounds();
 
 }
 
@@ -46,8 +48,8 @@ void Game::ballBrickCollision(Ball& ball) {
             brick = brickVector.erase(brick);
 
             ball.speed.y*=-1.0;
+audioManager.PlayCustomSound(SoundFile::BrickExplosion);
 
-audioManager.PlayCustomSound(1);
            // ball.speed.x*=1.09;//crazy mode
            // ball.updatePosition(GetFrameTime());
             brickCount--;
@@ -71,7 +73,9 @@ audioManager.PlayCustomSound(1);
             player.dimension.y * (1 + 2 * playerHitboxSize)
         })) {
         //////reflection sound/////////
-         audioManager.PlayCustomSound(2);
+        audioManager.PlayCustomSound(SoundFile::Reflect);
+
+        
         // Handle collision between the ball and the player
 
         // Calculate the angle of incidence between the ball and the player's center
@@ -127,11 +131,17 @@ audioManager.PlayCustomSound(1);
             std::remove_if(balls.begin(), balls.end(), [this](const Ball & ball) {
 
         if(ball.state == Ball::State::WALL_COLLISION){
-            audioManager.PlayCustomSound(2);
+                    audioManager.PlayCustomSound(SoundFile::Reflect);
+
+        
+            
         }
 bool isDeleted=ballShouldBeDeleted(ball);
 if(isDeleted==true){
-     audioManager.PlayCustomSound(0);//death Sound///
+            audioManager.PlayCustomSound(SoundFile::Death);
+
+        
+    //death Sound///
 }
     // Cleanup
                 return isDeleted;
@@ -200,7 +210,7 @@ void Game::createMultipleBrick() {
     brickWidth = size.x;
     brickHeight = size.y;
 
-    Vector2 startRowRange = {3, 8}; // Specify the start and end rows
+    Vector2 startRowRange = {3, 7}; // Specify the start and end rows
     Vector2 startColRange = {1, (float)cellCount - 2}; // Specify the start and end columns
 
     for (int row = startRowRange.x; row < startRowRange.y; ++row) {

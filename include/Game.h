@@ -3,7 +3,9 @@
 #include "Player.h"
 #include "Ball.h"
 #include"Brick.h"
+
 #include"SoundManager.h"
+#include <unordered_map>
 
 #include<chrono>
 
@@ -12,20 +14,40 @@
 #include <vector>
 
 #include <thread> 
+#include "Sounds.h" // Include the enums
+
 extern const int cellSize;
 
 extern const int cellCount;
 
+// Forward declaration of AudioManager
+// class AudioManager;
 
-
-
+// enum class SoundFile;
+enum class SoundFile; // Forward declare the enum
 
 class Game {
+
 private:
+
+
+    // Map to associate each SoundFile enum with its file path
+    const std::unordered_map<SoundFile, const char*> soundFilePaths = {
+        {SoundFile::Death, "sounds/reflect.wav"},
+        {SoundFile::BrickExplosion, "sounds/brick_Explosian.wav"},
+        {SoundFile::Reflect, "sounds/death.wav"}
+    };
+
 
    AudioManager audioManager;
 
-
+    const char* GetFilePathForSound(SoundFile soundFile) {
+        auto it = soundFilePaths.find(soundFile);
+        if (it != soundFilePaths.end()) {
+            return it->second;
+        }
+        return nullptr;
+    }
     // Sound death_sound
     // ,brick_sound,
     // reflection_sound;
@@ -33,6 +55,15 @@ private:
 
 
 public:
+
+
+    void LoadSounds();
+    void UnloadSounds();
+    void PlayCustomSound(SoundFile soundFile);
+
+    // Method to load and play a sound using the SoundFile enum
+
+
     int ballsDrawn = 0;
     int ballsUpdates = 0;
 

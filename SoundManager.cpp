@@ -1,5 +1,6 @@
 #include"SoundManager.h"
 
+#include "Game.h" // Include Game here for the enum
 
 
 AudioManager::AudioManager() {
@@ -10,21 +11,22 @@ AudioManager::~AudioManager() {
     CloseAudioDevice();
 }
 
+
 void AudioManager::LoadCustomSound(const char* filePath) {
     sounds.push_back(LoadSound(filePath));
 }
 
-void AudioManager::PlayCustomSound(int i) {
-    if (i >= 0 && static_cast<size_t>(i) < sounds.size()) {
-        PlaySound(sounds[i]);
-    }
-}
-
-void AudioManager::UnloadCustomSounds() {
-    for (size_t i = 0; i < sounds.size(); ++i) {
-        UnloadSound(sounds[i]);
+void AudioManager::UnloadAllSounds() {
+    for (const auto& sound : sounds) {
+        UnloadSound(sound);
     }
     sounds.clear();
+}
+
+void AudioManager::PlayCustomSound(SoundFile soundFile) {
+   
+        PlaySound(sounds[static_cast<size_t>(soundFile)]);
+    
 }
 
 

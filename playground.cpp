@@ -29,9 +29,9 @@ const Color green = {
     255
 };
 const Color darkGreen = {
-    43,
-    51,
-    24,
+    0,
+    0,
+    0,
     255
 };
 
@@ -79,12 +79,7 @@ int main() {
     InitWindow((cellSize * cellCount), (cellSize * cellCount), "Shape Collider");
 
     SetWindowPosition(250, 100);
-// layout_name: controls initialization
-    //----------------------------------------------------------------------------------
-    bool WindowBox000Active = true;
-    bool Button001Pressed = false;
-    bool Button002Pressed = false;
-    //----------------------------------------------------------------------------------
+
     SetTargetFPS(60);
 
     Game* game = new Game();
@@ -104,7 +99,7 @@ game->createMultipleBrick();
 
 
  // Create a rectangle for the button
-    Rectangle buttonRec = {  GetScreenWidth() / 2 - 100, GetScreenHeight() / 2 - 40, 200, 80 };
+    Rectangle buttonRec = {(float)  GetScreenWidth() / 2 - 100,(float) GetScreenHeight() / 2 - 40, 200, 80 };
 
 ///game loop////
 while (!WindowShouldClose()) {
@@ -124,17 +119,6 @@ while (!WindowShouldClose()) {
                 game->generateMultipleBall(ballNumber);// Button was clicked
            running=true; // You can add your own code here to respond to the button click
         }
-// // raygui: controls drawing
-//             //----------------------------------------------------------------------------------
-//             if (WindowBox000Active)
-//             {
-//                 WindowBox000Active = !GuiWindowBox((Rectangle){ 480, 144, 336, 480 }, "SAMPLE TEXT");
-//                 Button001Pressed = GuiButton((Rectangle){ 576, 456, 144, 24 }, "SAMPLE TEXT"); 
-//                 Button002Pressed = GuiButton((Rectangle){ 576, 504, 144, 24 }, "SAMPLE TEXT"); 
-//                 GuiStatusBar((Rectangle){ 504, 192, 96, 24 }, "SAMPLE TEXT");
-//             }
- // Check for user input to manage the game instance
-
 
 
         if (IsKeyDown(KEY_Q)) {
@@ -143,6 +127,7 @@ while (!WindowShouldClose()) {
             // Delete the previous instance and create a new one
             delete game;
             game = new Game();
+
 running=false;
  //game->generateMultipleBall(ballNumber);
  game->createMultipleBrick();
@@ -150,15 +135,15 @@ running=false;
         }
     
     ////record and observation variable///
-    game->ballsDrawn = 0;
-    game->ballsUpdates = 0;
+    game->ballsDrawn = 0; game->ballsUpdates = 0;
 
     //////pause game logic//////
     int keyPressed = GetKeyPressed();
 
-    if (keyPressed == KEY_P) {
+    if (keyPressed == KEY_P) {//pause if p entered
             flagPause = !flagPause;
         }
+
 
 drawBackground(backgroundState);
 
