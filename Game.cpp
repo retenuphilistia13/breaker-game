@@ -13,14 +13,26 @@ void Game::UnloadSounds() {
 }
 
 void Game::PlayCustomSound(SoundFile soundFile) {
-     
-    
+    switch (soundFile) {
+        case SoundFile::Death:
+            audioManager.PlayCustomSound(SoundFile::Death);
+            break;
+        case SoundFile::BrickExplosion:
+            audioManager.PlayCustomSound(SoundFile::BrickExplosion);
+            break;
+        case SoundFile::Reflect:
+            audioManager.PlayCustomSound(SoundFile::Reflect);
+            break;
+        // Add more cases for other SoundFile enum values if needed
+        default:
+            TraceLog(LOG_WARNING, "Unknown SoundFile: %d", static_cast<int>(soundFile));
+            break;
+    }
 }
 
 Game::Game() {
 
-
-LoadSounds();
+ LoadSounds();
 
 
 }
@@ -28,8 +40,8 @@ LoadSounds();
 
 Game::~Game(){
 
-UnloadSounds();
-
+ UnloadSounds();
+//unload automatically in audio manager
 }
 
 
@@ -48,7 +60,7 @@ void Game::ballBrickCollision(Ball& ball) {
             brick = brickVector.erase(brick);
 
             ball.speed.y*=-1.0;
-audioManager.PlayCustomSound(SoundFile::BrickExplosion);
+PlayCustomSound(SoundFile::BrickExplosion);
 
            // ball.speed.x*=1.09;//crazy mode
            // ball.updatePosition(GetFrameTime());
@@ -73,7 +85,7 @@ audioManager.PlayCustomSound(SoundFile::BrickExplosion);
             player.dimension.y * (1 + 2 * playerHitboxSize)
         })) {
         //////reflection sound/////////
-        audioManager.PlayCustomSound(SoundFile::Reflect);
+        PlayCustomSound(SoundFile::Reflect);
 
         
         // Handle collision between the ball and the player
@@ -131,14 +143,14 @@ audioManager.PlayCustomSound(SoundFile::BrickExplosion);
             std::remove_if(balls.begin(), balls.end(), [this](const Ball & ball) {
 
         if(ball.state == Ball::State::WALL_COLLISION){
-                    audioManager.PlayCustomSound(SoundFile::Reflect);
+                   PlayCustomSound(SoundFile::Reflect);
 
         
             
         }
 bool isDeleted=ballShouldBeDeleted(ball);
 if(isDeleted==true){
-            audioManager.PlayCustomSound(SoundFile::Death);
+            PlayCustomSound(SoundFile::Death);
 
         
     //death Sound///

@@ -33,9 +33,12 @@ private:
 
     // Map to associate each SoundFile enum with its file path
     const std::unordered_map<SoundFile, const char*> soundFilePaths = {
-        {SoundFile::Death, "sounds/reflect.wav"},
+            {SoundFile::AnotherSound, "sounds/another_sound.wav"},
+    {SoundFile::YetAnotherSound, "sounds/yet_another_sound.wav"},
+        {SoundFile::Reflect, "sounds/reflect.wav"},
         {SoundFile::BrickExplosion, "sounds/brick_Explosian.wav"},
-        {SoundFile::Reflect, "sounds/death.wav"}
+        {SoundFile::Death, "sounds/death.wav"}
+        
     };
 
 

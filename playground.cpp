@@ -79,7 +79,10 @@ int main() {
     InitWindow((cellSize * cellCount), (cellSize * cellCount), "Shape Collider");
 
     SetWindowPosition(250, 100);
+// layout_name: controls initialization
+    //----------------------------------------------------------------------------------
 
+    //----------------------------------------------------------------------------------
     SetTargetFPS(60);
 
     Game* game = new Game();
@@ -116,7 +119,7 @@ while (!WindowShouldClose()) {
 // Update
         if (GuiButton(buttonRec, "Click Me!"))
         {
-                game->generateMultipleBall(ballNumber);// Button was clicked
+               
            running=true; // You can add your own code here to respond to the button click
         }
 
@@ -133,7 +136,10 @@ running=false;
  game->createMultipleBrick();
 
         }
-    
+            if (GuiButton(buttonRec, "Click Me!"))
+        {
+                game->generateMultipleBall(ballNumber);// Button was clicked
+            }
     ////record and observation variable///
     game->ballsDrawn = 0; game->ballsUpdates = 0;
 

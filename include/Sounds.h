@@ -3,5 +3,7 @@
 enum class SoundFile {
     Death,
     BrickExplosion,
-    Reflect
+    Reflect,
+        AnotherSound,
+    YetAnotherSound
 };
