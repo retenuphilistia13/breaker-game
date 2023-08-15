@@ -50,9 +50,9 @@ public:
 
 Ball();
 
-Ball(int CountSpeed,int CountPosition);
+Ball(Vector2 Speed,Vector2 position1);
 
-    Vector2 ballPosition(int CountPosition);
+    Vector2 ballPosition(Vector2 position1);
 
     Vector2 BallSpeed(int CountSpeed);
 

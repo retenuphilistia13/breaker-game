@@ -9,17 +9,21 @@ const int cellCount;
 
 const float maxSpeedChange = 40.5f;
 
-Ball::Ball(int countPosition, int countSpeed) {
+Ball::Ball(Vector2 Speed, Vector2 position1) {
 
-    position = ballPosition(countPosition);
-    speed = BallSpeed(countSpeed);
+    position.x = position1.x;
+    position.y= position1.y;
+
+Speed.x=speed.x;
+Speed.y = speed.y;    //speed = BallSpeed(countSpeed);
+    
     state = State::NORMAL; // Initialize state to NORMAL
 }
 
-Vector2 Ball::ballPosition(int CountPosition) {
+Vector2 Ball::ballPosition(Vector2 position1) {
     float x, y = 0;
-    x = static_cast < float > (cellCount * cellSize / 2) + static_cast < int > (CountPosition);
-    y = static_cast < float > (cellCount * cellSize / 2);
+    x = static_cast < float > (position1.x+radius);
+    y = static_cast < float > (position1.y+radius);
 
     return Vector2 {
         x,
@@ -93,16 +97,18 @@ if (position.y <= radius) {
         // Normalize the speed vector
         float speedMagnitude = sqrtf(speed.x * speed.x + speed.y * speed.y);
 
-        if (speedMagnitude > maxXSpeed) {
-            float scale = maxXSpeed / speedMagnitude;
-            speed.x *= scale;
-            speed.y *= scale;
-        }
+        // if (speedMagnitude > maxXSpeed) {
+        //     float scale = maxXSpeed / speedMagnitude;
+        //     speed.x *= scale;
+        //     speed.y *= scale;
+        // }
 
         // Adjust speed in y coordinate
         if (fabsf(speed.y) > maxYSpeed) { // compare using absolute value
             speed.y = copysignf(maxYSpeed, speed.y);
         }
+
+
 
     }
 

@@ -15,16 +15,28 @@ public:
 
     Vector2 PlayerSpeed = { (float)dimension.x/11 , 0.0f };
 
-    Vector2 direction = { 1.0f, 0.0f };
+    //Vector2 direction = { 1.0f, 0.0f };
 
 
 public:
-        // Method to get the player's hitbox as a Rectangle
-    Rectangle getRectangle() const;
+    Vector2 getSpeed(){
+
+        return PlayerSpeed;
+    }
+
+    Vector2 getPosition(){
+
+        return position;
+    }
+    
+    Rectangle getRectangle() const;// Method to get the player's hitbox as a Rectangle
+
     void draw();
     void update();
     void userInput();
+
 double lastUpdateTime = 0;
+
     bool EventTriggered(double interval)
 {
     double currentTime = GetTime();

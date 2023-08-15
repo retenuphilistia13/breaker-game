@@ -32,6 +32,7 @@ void Game::PlayCustomSound(SoundFile soundFile) {
 
 Game::Game() {
 
+
  LoadSounds();
 
 
@@ -40,7 +41,10 @@ Game::Game() {
 
 Game::~Game(){
 
- UnloadSounds();
+ //UnloadSounds();
+ brickVector.clear();
+
+
 //unload automatically in audio manager
 }
 
@@ -115,8 +119,8 @@ PlayCustomSound(SoundFile::BrickExplosion);
     }
 }
 
-    void Game::createBallInstance(int countPosition, int countSpeed) {
-        balls.emplace_back(countPosition, countSpeed);
+    void Game::createBallInstance(Vector2 pos, Vector2 speed) {
+        balls.emplace_back(pos, speed);
     }
 
 
@@ -193,8 +197,11 @@ if(isDeleted==true){
     void Game::generateMultipleBall(size_t ballNumber) {
 
     for (size_t i = 0; i < ballNumber; ++i) { //crete ball instances
-        CountSpeed = 200;
-        createBallInstance(CountPosition, CountSpeed);
+       // CountSpeed = 200;
+        Vector2 pos={this->player.getPosition().x-2*cellSize,this->player.getPosition().y-2*cellSize};
+        Vector2 speed={200,200};
+
+        createBallInstance(speed, pos);
 
         CountPosition += cellSize / (ballNumber * 0.1);
     }
@@ -212,32 +219,116 @@ std::unique_ptr<Brick> brickInstance = std::make_unique<Brick>(Vector2{pos.x, po
 }
 
 void Game::createMultipleBrick() {
-    Brick::BRICKSIZE brickSize = Brick::BRICKSIZE::MEDIUM;
+    Brick::BRICKSIZE brickSize = Brick::BRICKSIZE::SMALL;
 
     Vector2 size = Brick::getVector2ForBrickSize(brickSize);
+// Clear any existing bricks from the vector
+    brickVector.clear();
 
-    float brickSpacingX = size.x / 40; // Initialize spacing for each brick in a row
-    float brickSpacingY = size.y / 30; // Initialize spacing for each row of bricks
+  int patternSize = 10; // Size of the face pattern
 
-    brickWidth = size.x;
-    brickHeight = size.y;
+    // Calculate the total size of the face pattern
+    float patternTotalSize = patternSize * size.x;
 
-    Vector2 startRowRange = {3, 7}; // Specify the start and end rows
-    Vector2 startColRange = {1, (float)cellCount - 2}; // Specify the start and end columns
+    // Calculate the starting position for the face to center it
+    Vector2 startPosition = {
+        (GetScreenWidth() - patternTotalSize) / 2,
+        (GetScreenHeight() - patternSize * size.y) / 2
+    };
 
-    for (int row = startRowRange.x; row < startRowRange.y; ++row) {
-        for (int col = startColRange.x; col < startColRange.y; ++col) {
-            float x =(float) col * (brickWidth + brickSpacingX) + (brickSpacingX * (col - startColRange.x));
-            float y =(float) row * (brickHeight + brickSpacingY);
+    // Define the face pattern using a 2D array
+   int facePattern[patternSize][patternSize];
 
-            // Debugging: Print calculated x and y positions
-            //std::cout << "Row: " << row << " Col: " << col << " X: " << x << " Y: " << y << std::endl;
+    // // Populate the array with 1 ///standart
+    // for (int row = 0; row < patternSize; ++row) {
+    //     for (int col = 0; col < patternSize; ++col) {
+        
+    //         facePattern[row][col] = 1;
+        
+    //     }
+    // }
 
-            if (x + brickWidth > 0 && x < GetScreenWidth() - (brickWidth + brickSpacingX) && y + brickHeight > 0 && y < GetScreenHeight() - (brickHeight + brickSpacingY)) {
-createBrickInstance({x,y},brickSize);
+
+// hollow square////
+     for (int i = 0; i < patternSize; i++) {
+
+        for (int j = 0; j < patternSize; j++) {// cut the hollow square patternSize/2
+      // print only bricks in first and last row
+      if (i == 0 || i == patternSize - 1) {
+        facePattern[i][j]=1;
+      }
+      else {
+        // print bricks only at first and last position row
+        if (j == 0 || j == patternSize - 1) {
+          facePattern[i][j]=1;
+        }
+        else {////empty/////
+          facePattern[i][j]=0;
+        }
+
+      }
+
+    }
+  
+  }
+
+   // Populate the array with a right triangle  pattern
+    // for (int row = 0; row < patternSize; ++row) {
+    //     for (int col = 0; col < patternSize - row - 1; ++col) {
+    //         facePattern[row][col] = 0; // Fill with 0 (spaces)
+    //     }
+    //     for (int col = patternSize - row - 1; col < patternSize + row; ++col) {
+    //         facePattern[row][col] = 1; // Fill with 1 (stars)
+    //     }
+    // }
+
+    // pyramid 
+//     int sizeArrX,sizeArrY;
+
+//     sizeArrX=patternSize-2;
+//     sizeArrY=2 * patternSize - 3;
+
+//     int facePattern[sizeArrX][sizeArrY];
+// startPosition = {
+//         (GetScreenWidth() - (float)patternTotalSize*1.5) ,
+//         (GetScreenHeight() - patternSize * size.y) / 2
+//     };
+//     // Populate the array with a pyramid pattern
+//     for (int row = 0; row < sizeArrX; ++row) {
+//         for (int col = 0; col < sizeArrX - row - 1; ++col) {
+//             facePattern[row][col] = 0; // Fill with 0 (spaces)
+//         }
+//         for (int col = sizeArrX - row - 1; col < sizeArrX + row; ++col) {
+//             facePattern[row][col] = 1; // Fill with 1 (stars)
+//         }
+//     }
+  // // Loop over the face pattern and create bricks for pyramid only
+    // for (int y = 0; y < sizeArrX; y++) {
+    //     for (int x = 0; x <sizeArrY; x++) {
+    //         if (facePattern[y][x] == 1) {
+    //             Vector2 brickPosition = {
+    //                 startPosition.x + x * size.x,
+    //                 startPosition.y + y * size.y
+    //             };
+    //             createBrickInstance(brickPosition, brickSize);
+    //         }
+    //     }
+    // }
+
+    ///standart/////
+   for (int y = 0; y < patternSize; y++) {
+        for (int x = 0; x <  patternSize ; x++) {
+            if (facePattern[y][x] == 1) {
+                Vector2 brickPosition = {
+                    startPosition.x + x * size.x,
+                    startPosition.y + y * size.y
+                };
+                createBrickInstance(brickPosition, brickSize);
             }
         }
     }
+
+  
 }
 
 

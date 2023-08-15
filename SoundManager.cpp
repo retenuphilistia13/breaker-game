@@ -9,7 +9,7 @@ AudioManager::AudioManager() {
 }
 
 AudioManager::~AudioManager() {
-   
+   UnloadAllSounds();
  CloseAudioDevice();
 }
 

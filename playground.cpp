@@ -2,6 +2,7 @@
 
 #include<String>
 
+#include<memory>
 ////game headers/////
 #include <raylib.h>
 
@@ -36,7 +37,7 @@ const Color darkGreen = {
 };
 
 const int cellSize = 20;
-const int cellCount = 40;
+const int cellCount = 35;
 
 const std::string Title = "Shape Collider";
 
@@ -67,7 +68,9 @@ int main() {
    //----------------------------------------------------------------------------------
    SetTargetFPS(60);
 
-   Game * game = new Game();
+  Game * game = new Game();
+
+// std::unique_ptr<Game> game=std::make_unique<Game>();
 
    bool running = false;
 
@@ -108,7 +111,9 @@ int main() {
 
       if (IsKeyDown(KEY_Q)) {
          running = false;
-      } else if (IsKeyDown(KEY_R)) {
+      } 
+////Reatart game///////
+      else if (IsKeyDown(KEY_R)) {
          // Delete the previous instance and create a new one
          delete game;
          game = new Game();
@@ -118,7 +123,7 @@ int main() {
          game -> createMultipleBrick();
 
       }
-      if (GuiButton(buttonRec, "restart")) { // Button was clicked
+      if (GuiButton(buttonRec, "Restart")) { // Button was clicked
          game -> generateMultipleBall(ballNumber);
       }
 

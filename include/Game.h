@@ -24,7 +24,7 @@ extern const int cellCount;
 // class AudioManager;
 
 // enum class SoundFile;
-enum class SoundFile; // Forward declare the enum
+//enum class SoundFile; // Forward declare the enum
 
 class Game {
 
@@ -33,8 +33,7 @@ private:
 
     // Map to associate each SoundFile enum with its file path
     const std::unordered_map<SoundFile, const char*> soundFilePaths = {
-            {SoundFile::AnotherSound, "sounds/another_sound.wav"},
-    {SoundFile::YetAnotherSound, "sounds/yet_another_sound.wav"},
+
         {SoundFile::Reflect, "sounds/reflect.wav"},
         {SoundFile::BrickExplosion, "sounds/brick_Explosian.wav"},
         {SoundFile::Death, "sounds/death.wav"}
@@ -70,7 +69,7 @@ public:
     int ballsDrawn = 0;
     int ballsUpdates = 0;
 
-    int CountPosition = 0;
+    int CountPosition = 200;
     int CountSpeed = 0;
 
 
@@ -87,13 +86,14 @@ public:
 std::vector<std::unique_ptr<Brick>> brickVector;
 
     std::vector<Ball> balls;
+
     Game();
     ~Game();
     void playerBallCollision(Ball& ballToCheck);
 
 void ballBrickCollision(Ball& ball);
 
-    void createBallInstance(int countPosition, int countSpeed);
+    void createBallInstance(Vector2 pos, Vector2 speed);
 
     void createBrickInstance(Vector2 pos,Brick::BRICKSIZE brickSize);
 
